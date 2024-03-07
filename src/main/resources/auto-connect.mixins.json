@@ -1,0 +1,8 @@
+{
+	"required": true,
+	"package": "io.github.paulem.autoconnect.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
