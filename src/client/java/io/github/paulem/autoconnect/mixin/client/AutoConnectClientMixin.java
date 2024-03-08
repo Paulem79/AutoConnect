@@ -2,6 +2,7 @@ package io.github.paulem.autoconnect.mixin.client;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import io.github.paulem.autoconnect.AutoConnect;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
@@ -38,7 +39,7 @@ public class AutoConnectClientMixin extends Screen {
 	private Element addDrawableIfNotOnlineButton(TitleScreen instance, Element element, Operation<Element> original) {
 		if(element instanceof ButtonWidget button &&
 				(button.getMessage().contains(Text.translatable("menu.multiplayer")) ||
-					button.getMessage().contains(Text.translatable("menu.online")))
+					(!AutoConnect.isModMenuPresent && button.getMessage().contains(Text.translatable("menu.online"))))
 		)
 			return element;
         return original.call(instance, element);

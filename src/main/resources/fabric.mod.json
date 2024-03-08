@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "auto-connect",
-	"version": "1.0",
+	"version": "1.0.1",
 	"name": "Auto Connect",
 	"description": "Automatically connect to server!",
 	"authors": [
