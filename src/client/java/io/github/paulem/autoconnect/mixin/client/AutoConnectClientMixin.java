@@ -26,9 +26,7 @@ public class AutoConnectClientMixin extends Screen {
 
 	@Inject(at = @At("HEAD"), method = "initWidgetsNormal")
 	private void initWidgetsNormal(int y, int spacingY, CallbackInfo ci) {
-		this.addDrawableChild(ButtonWidget.builder(Text.translatable("menu.serverautoconnect"), (button) -> {
-			ConnectScreen.connect(this, MinecraftClient.getInstance(), ServerAddress.parse(serverInfo.address), serverInfo, false);
-		}).dimensions(this.width / 2 - 100, y + spacingY, 200, 20).build());
+		this.addDrawableChild(ButtonWidget.builder(Text.translatable("menu.serverautoconnect"), (button) -> ConnectScreen.connect(this, MinecraftClient.getInstance(), ServerAddress.parse(serverInfo.address), serverInfo, false)).dimensions(this.width / 2 - 100, y + spacingY, 200, 20).build());
 	}
 
 	@WrapOperation(
