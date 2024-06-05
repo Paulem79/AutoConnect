@@ -25,7 +25,7 @@ public class AutoConnectClientMixin extends Screen {
 	}
 
 	@Inject(at = @At("HEAD"), method = "initWidgetsNormal")
-	private void initWidgets(int y, int spacingY, CallbackInfo ci) {
+	private void initWidgetsNormal(int y, int spacingY, CallbackInfo ci) {
 		this.addDrawableChild(ButtonWidget.builder(Text.translatable("menu.serverautoconnect"), (button) -> ConnectScreen.connect(this, MinecraftClient.getInstance(), ServerAddress.parse(serverInfo.address), serverInfo, false, null)).dimensions(this.width / 2 - 100, y + spacingY, 200, 20).build());
 	}
 
@@ -35,6 +35,7 @@ public class AutoConnectClientMixin extends Screen {
 					target = "Lnet/minecraft/client/gui/screen/TitleScreen;addDrawableChild(Lnet/minecraft/client/gui/Element;)Lnet/minecraft/client/gui/Element;")
 	)
 	private Element addDrawableIfNotOnlineButton(TitleScreen instance, Element element, Operation<Element> original) {
+		// If the button is the multiplayer one, or modmenu isn't present and the button is the realms one
 		if(element instanceof ButtonWidget button &&
 				(button.getMessage().contains(Text.translatable("menu.multiplayer")) ||
 						(!AutoConnectClient.isModMenuPresent && button.getMessage().contains(Text.translatable("menu.online"))))
