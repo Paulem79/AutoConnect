@@ -12,17 +12,13 @@
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/auto-connect/icon.png",
-	"environment": "*",
+	"environment": "client",
 	"entrypoints": {
-		"main": [
-			"io.github.paulem.autoconnect.AutoConnect"
-		],
 		"client": [
 			"io.github.paulem.autoconnect.AutoConnectClient"
 		]
 	},
 	"mixins": [
-		"auto-connect.mixins.json",
 		{
 			"config": "auto-connect.client.mixins.json",
 			"environment": "client"
@@ -30,8 +26,8 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.15.0",
-		"minecraft": "~1.20.1",
-		"java": ">=17",
+		"minecraft": ">=1.21-beta.3",
+		"java": ">=21",
 		"fabric-api": "*"
 	}
 }

@@ -2,12 +2,12 @@ package io.github.paulem.autoconnect.mixin.client;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import io.github.paulem.autoconnect.AutoConnect;
+import io.github.paulem.autoconnect.AutoConnectClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
-import net.minecraft.client.gui.screen.ConnectScreen;
+import net.minecraft.client.gui.screen.multiplayer.ConnectScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.network.ServerAddress;
 import net.minecraft.text.Text;
@@ -25,8 +25,8 @@ public class AutoConnectClientMixin extends Screen {
 	}
 
 	@Inject(at = @At("HEAD"), method = "initWidgetsNormal")
-	private void initWidgetsNormal(int y, int spacingY, CallbackInfo ci) {
-		this.addDrawableChild(ButtonWidget.builder(Text.translatable("menu.serverautoconnect"), (button) -> ConnectScreen.connect(this, MinecraftClient.getInstance(), ServerAddress.parse(serverInfo.address), serverInfo, false)).dimensions(this.width / 2 - 100, y + spacingY, 200, 20).build());
+	private void initWidgets(int y, int spacingY, CallbackInfo ci) {
+		this.addDrawableChild(ButtonWidget.builder(Text.translatable("menu.serverautoconnect"), (button) -> ConnectScreen.connect(this, MinecraftClient.getInstance(), ServerAddress.parse(serverInfo.address), serverInfo, false, null)).dimensions(this.width / 2 - 100, y + spacingY, 200, 20).build());
 	}
 
 	@WrapOperation(
@@ -37,9 +37,11 @@ public class AutoConnectClientMixin extends Screen {
 	private Element addDrawableIfNotOnlineButton(TitleScreen instance, Element element, Operation<Element> original) {
 		if(element instanceof ButtonWidget button &&
 				(button.getMessage().contains(Text.translatable("menu.multiplayer")) ||
-					(!AutoConnect.isModMenuPresent && button.getMessage().contains(Text.translatable("menu.online"))))
-		)
+						(!AutoConnectClient.isModMenuPresent && button.getMessage().contains(Text.translatable("menu.online"))))
+		) {
 			return element;
+		}
+
         return original.call(instance, element);
     }
 }
