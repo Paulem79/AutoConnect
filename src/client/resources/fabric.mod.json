@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "auto-connect",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"name": "Auto Connect",
 	"description": "Automatically connect to server!",
 	"authors": [
@@ -12,26 +12,19 @@
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/auto-connect/icon.png",
-	"environment": "*",
+	"environment": "client",
 	"entrypoints": {
-		"main": [
-			"io.github.paulem.autoconnect.AutoConnect"
-		],
 		"client": [
 			"io.github.paulem.autoconnect.AutoConnectClient"
 		]
 	},
-	"mixins": [
-		"auto-connect.mixins.json",
-		{
-			"config": "auto-connect.client.mixins.json",
-			"environment": "client"
-		}
-	],
 	"depends": {
-		"fabricloader": ">=0.15.0",
-		"minecraft": "~1.20.4",
+		"fabricloader": ">=0.15.9",
+		"minecraft": ["1.20.4", "1.20.3"],
 		"java": ">=17",
 		"fabric-api": "*"
+	},
+	"recommends": {
+		"modmenu": "*"
 	}
 }
