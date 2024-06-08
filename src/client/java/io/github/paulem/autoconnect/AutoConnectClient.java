@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 public class AutoConnectClient implements ClientModInitializer {
-	public static final Logger LOGGER = LoggerFactory.getLogger("assets/auto-connect");
+	public static final Logger LOGGER = LoggerFactory.getLogger("AutoConnect");
 	public static final ServerInfo serverInfo = new ServerInfo("Principal", Config.serverAddress, ServerInfo.ServerType.OTHER);
 
 	@Override
