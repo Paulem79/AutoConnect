@@ -18,12 +18,6 @@
 			"io.github.paulem.autoconnect.AutoConnectClient"
 		]
 	},
-	"mixins": [
-		{
-			"config": "auto-connect.client.mixins.json",
-			"environment": "client"
-		}
-	],
 	"depends": {
 		"fabricloader": ">=0.15.11",
 		"minecraft": ">=1.21-beta.1",
