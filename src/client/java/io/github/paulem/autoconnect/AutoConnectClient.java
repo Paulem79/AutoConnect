@@ -3,6 +3,7 @@ package io.github.paulem.autoconnect;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.screen.multiplayer.ConnectScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -16,15 +17,32 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 
 public class AutoConnectClient implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("AutoConnect");
-	public static final ServerInfo serverInfo = new ServerInfo("Principal", Config.serverAddress, ServerInfo.ServerType.OTHER);
+	public static final ServerInfo serverInfo;
 
-	@Override
+    static {
+        try {
+            serverInfo = new ServerInfo(
+					"Principal",
+					Files.readAllLines(FabricLoader.getInstance().getGameDir().getParent().resolve("ip.txt"), StandardCharsets.UTF_8).get(0),
+					ServerInfo.ServerType.OTHER
+			);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
 	public void onInitializeClient() {
 		LOGGER.info("AutoConnect enabled!");
+
+		LOGGER.info(serverInfo.address);
 
 		ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
 			if (screen instanceof TitleScreen) {
