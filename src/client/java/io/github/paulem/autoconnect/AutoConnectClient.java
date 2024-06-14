@@ -23,26 +23,22 @@ import java.nio.file.Files;
 import java.util.List;
 
 public class AutoConnectClient implements ClientModInitializer {
-	public static final Logger LOGGER = LoggerFactory.getLogger("AutoConnect");
-	public static final ServerInfo serverInfo;
-
-    static {
-        try {
-            serverInfo = new ServerInfo(
-					"Principal",
-					Files.readAllLines(FabricLoader.getInstance().getGameDir().getParent().resolve("ip.txt"), StandardCharsets.UTF_8).get(0),
-					ServerInfo.ServerType.OTHER
-			);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	private final Logger LOGGER = LoggerFactory.getLogger("AutoConnect");
+	private ServerInfo serverInfo;
 
     @Override
 	public void onInitializeClient() {
 		LOGGER.info("AutoConnect enabled!");
 
-		LOGGER.info(serverInfo.address);
+		try {
+			serverInfo = new ServerInfo(
+					"Principal",
+					Files.readAllLines(FabricLoader.getInstance().getGameDir().getParent().resolve("ip.txt"), StandardCharsets.UTF_8).get(0),
+					ServerInfo.ServerType.OTHER
+			);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 
 		ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
 			if (screen instanceof TitleScreen) {
