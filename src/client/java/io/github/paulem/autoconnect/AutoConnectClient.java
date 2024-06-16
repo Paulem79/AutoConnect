@@ -1,11 +1,15 @@
 package io.github.paulem.autoconnect;
 
+import com.terraformersmc.modmenu.api.ModMenuApi;
+import com.terraformersmc.modmenu.gui.widget.ModMenuButtonWidget;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.networking.v1.ClientLoginConnectionEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.screen.multiplayer.ConnectScreen;
+import net.minecraft.client.gui.screen.option.OptionsScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.network.ServerAddress;
@@ -47,7 +51,14 @@ public class AutoConnectClient implements ClientModInitializer {
 				// Get the multiplayer button properties
 				@Nullable ClickableWidget multiplayerBtn = buttons
 						.stream()
-						.filter(btn -> getKey(btn).equals("menu.multiplayer"))
+						.filter(button -> checkKey(button, "menu.multiplayer"))
+						.findFirst()
+						.orElse(null);
+
+				// Get the multiplayer button properties
+				@Nullable ClickableWidget realmsBtn = buttons
+						.stream()
+						.filter(button -> checkKey(button, "menu.online"))
 						.findFirst()
 						.orElse(null);
 
@@ -55,7 +66,14 @@ public class AutoConnectClient implements ClientModInitializer {
 
 				// Remove the multiplayer button and the realms button
 				buttons.remove(multiplayerBtn);
-				buttons.removeIf(button -> getKey(button).equals("menu.online"));
+				buttons.removeIf(button -> checkKey(button, "menu.online") && !(button instanceof ModMenuButtonWidget));
+				buttons.removeIf(button -> button instanceof ModMenuButtonWidget);
+
+				if(buttons.stream().noneMatch(btn -> btn instanceof ModMenuButtonWidget) && realmsBtn != null) {
+					buttons.add(
+							new ModMenuButtonWidget(realmsBtn.getX(), realmsBtn.getY(), realmsBtn.getWidth(), realmsBtn.getHeight(), ModMenuApi.createModsButtonText(), screen)
+					);
+				}
 
 				buttons.add(
 						ButtonWidget
@@ -64,11 +82,40 @@ public class AutoConnectClient implements ClientModInitializer {
 										multiplayerBtn.getWidth(), multiplayerBtn.getHeight())
 								.build()
 				);
+			} else if(screen instanceof OptionsScreen) {
+				List<ClickableWidget> buttons = Screens.getButtons(screen);
+
+				// Get the multiplayer button properties
+				@Nullable ClickableWidget telemetryBtn = buttons
+						.stream()
+						.filter(button -> checkKey(button, "options.telemetry"))
+						.findFirst()
+						.orElse(null);
+
+				if(telemetryBtn == null) return;
+
+				buttons.add(
+						new ModMenuButtonWidget(telemetryBtn.getX(), telemetryBtn.getY(), telemetryBtn.getWidth(), telemetryBtn.getHeight(), ModMenuApi.createModsButtonText(), screen)
+				);
+
+				// Remove the telemetry button
+				buttons.remove(telemetryBtn);
 			}
 		});
+
+		ClientLoginConnectionEvents.DISCONNECT.register(((handler, client) -> {
+			client.setScreen(new TitleScreen());
+		}));
 	}
 
-	public String getKey(@NotNull ClickableWidget btn) {
-		return ((TranslatableTextContent) btn.getMessage().getContent()).getKey();
+	@Nullable
+	public String getKey(@NotNull ClickableWidget button) {
+		if(button.getMessage() == null || button.getMessage().getContent() == null || !(button.getMessage().getContent() instanceof TranslatableTextContent)) return null;
+		return ((TranslatableTextContent) button.getMessage().getContent()).getKey();
+	}
+
+	public boolean checkKey(@NotNull ClickableWidget button, String translatable) {
+		String key = getKey(button);
+		return key != null && key.equals(translatable);
 	}
 }
