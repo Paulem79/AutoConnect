@@ -1,3 +1,5 @@
 {
-  "menu.serverautoconnect": "Rejoindre le serveur"
+  "autoconnect.menu.server": "Rejoindre le serveur",
+  "autoconnect.menu.noserver": "Pas de serveur défini",
+  "autoconnect.tooltip.noserver": "Pas de fichier ip.txt trouvé !"
 }

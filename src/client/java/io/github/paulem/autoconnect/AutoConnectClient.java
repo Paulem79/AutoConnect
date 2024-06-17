@@ -10,6 +10,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.screen.multiplayer.ConnectScreen;
 import net.minecraft.client.gui.screen.option.OptionsScreen;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.network.ServerAddress;
@@ -28,7 +29,7 @@ import java.util.List;
 
 public class AutoConnectClient implements ClientModInitializer {
 	private final Logger LOGGER = LoggerFactory.getLogger("AutoConnect");
-	private ServerInfo serverInfo;
+	private @Nullable ServerInfo serverInfo;
 
     @Override
 	public void onInitializeClient() {
@@ -41,7 +42,7 @@ public class AutoConnectClient implements ClientModInitializer {
 					ServerInfo.ServerType.OTHER
 			);
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			serverInfo = null;
 		}
 
 		ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
@@ -70,18 +71,32 @@ public class AutoConnectClient implements ClientModInitializer {
 				buttons.removeIf(button -> button instanceof ModMenuButtonWidget);
 
 				if(buttons.stream().noneMatch(btn -> btn instanceof ModMenuButtonWidget) && realmsBtn != null) {
+					// Add mod menu button
 					buttons.add(
 							new ModMenuButtonWidget(realmsBtn.getX(), realmsBtn.getY(), realmsBtn.getWidth(), realmsBtn.getHeight(), ModMenuApi.createModsButtonText(), screen)
 					);
 				}
 
-				buttons.add(
+				if(serverInfo != null) buttons.add(
 						ButtonWidget
-								.builder(Text.translatable("menu.serverautoconnect"), (button) -> ConnectScreen.connect(screen, client, ServerAddress.parse(serverInfo.address), serverInfo, false, null))
+								.builder(Text.translatable("autoconnect.menu.server"), (button) -> ConnectScreen.connect(screen, client, ServerAddress.parse(serverInfo.address), serverInfo, false, null))
 								.dimensions(multiplayerBtn.getX(), multiplayerBtn.getY(),
 										multiplayerBtn.getWidth(), multiplayerBtn.getHeight())
 								.build()
 				);
+
+				else {
+					ButtonWidget disabledBtn = ButtonWidget
+							.builder(Text.translatable("autoconnect.menu.noserver"), (button) -> {})
+							.dimensions(multiplayerBtn.getX(), multiplayerBtn.getY(),
+									multiplayerBtn.getWidth(), multiplayerBtn.getHeight())
+							.tooltip(Tooltip.of(Text.translatable("autoconnect.tooltip.noserver")))
+							.build();
+
+					disabledBtn.active = false;
+
+					buttons.add(disabledBtn);
+				}
 			} else if(screen instanceof OptionsScreen) {
 				List<ClickableWidget> buttons = Screens.getButtons(screen);
 
