@@ -37,7 +37,7 @@ public class AutoConnectClient implements ClientModInitializer {
 		try {
 			serverInfo = new ServerInfo(
 					"Principal",
-					Files.readAllLines(FabricLoader.getInstance().getGameDir().getParent().resolve("ip.txt"), StandardCharsets.UTF_8).get(0),
+					Files.readAllLines(FabricLoader.getInstance().getGameDir().getParent().resolve("ip.txt"), StandardCharsets.UTF_8).getFirst(),
 					ServerInfo.ServerType.OTHER
 			);
 		} catch (IOException e) {
