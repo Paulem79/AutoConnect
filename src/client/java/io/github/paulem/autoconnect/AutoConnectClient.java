@@ -3,6 +3,7 @@ package io.github.paulem.autoconnect;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import com.terraformersmc.modmenu.gui.widget.ModMenuButtonWidget;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.networking.v1.ClientLoginConnectionEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.fabricmc.loader.api.FabricLoader;
@@ -116,6 +117,10 @@ public class AutoConnectClient implements ClientModInitializer {
 				buttons.remove(telemetryBtn);
 			}
 		});
+
+		ClientLoginConnectionEvents.DISCONNECT.register(((handler, client) -> {
+			client.setScreen(new TitleScreen());
+		}));
 	}
 
 	@Nullable
